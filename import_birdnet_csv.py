@@ -1,4 +1,44 @@
 #!/usr/bin/env python3
+from pathlib import Path
+import sqlite3
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parent
+CSV = ROOT / "world_birds_only_database.csv"
+DB = ROOT / "world_birds.sqlite"
+
+if not CSV.exists():
+    raise SystemExit("Bird CSV database not found!")
+
+df = pd.read_csv(CSV, low_memory=False)
+
+required = {
+    "scientific_name",
+    "common_name",
+    "taxon_group",
+    "record_type"
+}
+
+missing = required - set(df.columns)
+if missing:
+    raise SystemExit(f"Missing columns: {missing}")
+
+df = df[
+    df["taxon_group"].fillna("").str.casefold().eq("aves")
+    & df["record_type"].fillna("").str.casefold().eq("species")
+].copy()
+
+if df.empty:
+    raise SystemExit("No bird species records found.")
+
+with sqlite3.connect(DB) as con:
+    df.to_sql("birds", con, if_exists="replace", index=False)
+    con.execute("""
+        CREATE VIEW IF NOT EXISTS birds_for_documentaries
+        AS SELECT * FROM birds
+    """)
+
+print(f"Successfully imported {len(df)} bird records.")!/usr/bin/env python3
 """Import the supplied Aves CSV into a searchable SQLite database."""
 from pathlib import Path
 import sqlite3
