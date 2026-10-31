@@ -1,0 +1,22 @@
+{
+  "project_name": "WILD NATURE AI AUTOMATION",
+  "database_source": "BirdNET Taxonomy 0.4-Oct2026",
+  "documentary": {
+    "first_duration_minutes": 30,
+    "scene_duration_seconds": 10,
+    "planned_scene_count": 180,
+    "audio": "natural_environmental_sounds_only",
+    "humans": false,
+    "visual_continuity": "strict"
+  },
+  "bird_database": {
+    "source_csv": "database/source/world_birds_only_database.csv",
+    "sqlite_output": "database/world_birds.sqlite",
+    "taxon_group": "Aves"
+  },
+  "editorial_rules": {
+    "verify_rarity_before_labeling": true,
+    "verify_conservation_status": true,
+    "check_image_license": true
+  }
+}
